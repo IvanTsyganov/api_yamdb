@@ -55,6 +55,10 @@ class User(AbstractUser):
         max_length=50,
         default=USER
     )
+    bio = models.TextField(
+        'Биография',
+        blank=True
+    )
 
     def __str__(self):
         return self.username
