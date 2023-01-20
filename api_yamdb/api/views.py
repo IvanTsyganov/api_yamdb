@@ -9,8 +9,7 @@ from .serializers import (
 )
 
 
-
-class GenreviewSet(viewsets.ModelViewSet):
+class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
@@ -19,7 +18,7 @@ class GenreviewSet(viewsets.ModelViewSet):
         pass
 
 
-class CategoryviewSet(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
@@ -28,7 +27,7 @@ class CategoryviewSet(viewsets.ModelViewSet):
         pass
 
 
-class TitleviewSet(viewsets.ModelViewSet):
+class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
