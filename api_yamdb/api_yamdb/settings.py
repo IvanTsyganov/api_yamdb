@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     'djoser',
     'api.apps.ApiConfig',
     'reviews.apps.ReviewsConfig',
-    'reviews',
 ]
 
 AUTH_USER_MODEL = 'reviews.User'
