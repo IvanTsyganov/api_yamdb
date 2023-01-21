@@ -4,7 +4,7 @@ from rest_framework.pagination import LimitOffsetPagination
 # local
 from reviews.models import Genre, Title, Category, Review, Comment
 from .permissions import (
-    is_authenticated_Or_ReadOnlyPermission, IsAuthorOrReadOnly
+    IsAuthenticatedOrReadOnlyPermission, IsAuthorOrReadOnly
 )
 from .serializers import (
     GenreSerializer,
@@ -18,7 +18,7 @@ from .serializers import (
 class GenreviewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
+    permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
 
     def perform_create(self, serializer):
         serializer.save
@@ -27,7 +27,7 @@ class GenreviewSet(viewsets.ModelViewSet):
 class CategoryviewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
+    permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
 
     def perform_create(self, serializer):
         pass
@@ -36,7 +36,7 @@ class CategoryviewSet(viewsets.ModelViewSet):
 class TitleviewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
+    permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
 
     def perform_create(self, serializer):
         pass
