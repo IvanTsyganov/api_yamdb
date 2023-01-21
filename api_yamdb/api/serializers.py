@@ -18,4 +18,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    pass
+
+    class Meta:
+        model = Title
+        fields = '__all__'
