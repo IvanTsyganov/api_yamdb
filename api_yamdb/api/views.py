@@ -1,3 +1,4 @@
+from reviews.models import Genre, Title, Category,User
 from rest_framework import filters, mixins, pagination, permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 # local
@@ -20,7 +21,7 @@ class GenreviewSet(viewsets.ModelViewSet):
     permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
 
     def perform_create(self, serializer):
-        pass
+        serializer.save
 
 
 class CategoryviewSet(viewsets.ModelViewSet):
