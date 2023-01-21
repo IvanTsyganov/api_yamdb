@@ -40,6 +40,7 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 
+
 class User(AbstractUser):
     USER = 'user'
     MODERATOR = 'moderator'
@@ -54,6 +55,10 @@ class User(AbstractUser):
         choices=USER_ROLES,
         max_length=50,
         default=USER
+    )
+    bio = models.TextField(
+        'Биография',
+        blank=True
     )
 
     def __str__(self):
