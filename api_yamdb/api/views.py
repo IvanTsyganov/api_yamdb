@@ -9,7 +9,6 @@ from .serializers import (
 )
 
 
-
 class GenreviewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
