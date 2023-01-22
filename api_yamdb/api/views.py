@@ -6,12 +6,23 @@ from rest_framework.permissions import AllowAny
 
 from reviews.models import Genre, Title, Category, User
 from .permissions import is_authenticated_Or_ReadOnlyPermission
+
+from rest_framework import filters, mixins, pagination, permissions, viewsets
+from rest_framework.pagination import LimitOffsetPagination
+# local
+from reviews.models import Genre, Title, Category, Review, Comment
+from .permissions import (
+    is_authenticated_Or_ReadOnlyPermission, IsAuthorOrReadOnly
+)
+
 from .serializers import (
     GenreSerializer,
     TitleSerializer,
     CategorySerializer,
     UserSerializer,
     SignUpSerializer
+    ReviewSerializer,
+    CommentSerializer,
 )
 
 
@@ -77,3 +88,22 @@ def signup(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 '''
 
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = (IsAuthorOrReadOnly,)
+    pagination_class = LimitOffsetPagination
+
+    def perform_create(self, serializer):
+        pass
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthorOrReadOnly,)
+    pagination_class = LimitOffsetPagination
+
+    def perform_create(self, serializer):
+        pass
