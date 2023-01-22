@@ -68,27 +68,6 @@ class SignUpViewSet(viewsets.ModelViewSet):
     serializer_class = SignUpSerializer
 
 
-'''
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def signup(request):
-    serializer = SignUpSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    if not User.objects.filter(username=request.data['username'],
-                               email=request.data['email']).exists():
-        serializer.save()
-    user = User.objects.get(username=request.data['username'],
-                            email=request.data['email'])
-    conformation_code = default_token_generator.make_token(user)
-    send_mail(f'Hello, {str(user.username)}! Your code is here!',
-              conformation_code,
-              settings.EMAIL_FOR_AUTH_LETTERS,
-              [request.data['email']],
-              fail_silently=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-'''
-
-
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
