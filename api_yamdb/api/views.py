@@ -1,16 +1,11 @@
 from django.core.mail import send_mail
 from rest_framework import filters, mixins, pagination, permissions, viewsets
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
-
-from reviews.models import Genre, Title, Category, User
-from .permissions import is_authenticated_Or_ReadOnlyPermission
-
 from rest_framework import filters, mixins, pagination, permissions, viewsets
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 # local
-from reviews.models import Genre, Title, Category, Review, Comment
+from reviews.models import Genre, Title, Category, Review, Comment, User
 from .permissions import (
     is_authenticated_Or_ReadOnlyPermission, IsAuthorOrReadOnly
 )
@@ -20,7 +15,7 @@ from .serializers import (
     TitleSerializer,
     CategorySerializer,
     UserSerializer,
-    SignUpSerializer
+    SignUpSerializer,
     ReviewSerializer,
     CommentSerializer,
 )
