@@ -18,54 +18,7 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        class TitleSerializer(serializers.ModelSerializer):
+class TitleSerializer(serializers.ModelSerializer):
     def validate_year(self,value):
         year_now = datetime.date.today().year
         if not (value <= year_now):
