@@ -18,10 +18,10 @@ router.register('titles', TitleviewSet, basename='title')
 router.register(r'users', UserViewSet, basename='user')
 router.register(r'signup', SignUpViewSet, basename='signup')
 router.register(r'titles/(?P<title_id>\d+)/reviews',
-                ReviewViewSet, basename='review')
+                ReviewViewSet, basename='reviews')
 router.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
-    CommentViewSet, basename='comment'
+    CommentViewSet, basename='comments'
 )
 
 urlpatterns = [

@@ -81,7 +81,6 @@ class Review(models.Model):
         verbose_name='Произведение',
     )
     score = models.IntegerField(
-        default=0,
         validators=[MinValueValidator(1), MaxValueValidator(10)],
         verbose_name='Рейтинг',
     )
@@ -116,3 +115,6 @@ class Comment(models.Model):
     )
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ('-pub_date',)
