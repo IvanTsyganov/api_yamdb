@@ -1,4 +1,5 @@
 from reviews.models import Genre, Title, Category,User
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, pagination, permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 # local
@@ -6,6 +7,9 @@ from reviews.models import Genre, Title, Category, Review, Comment
 from .permissions import (
     IsAuthenticatedOrReadOnlyPermission, IsAuthorOrReadOnly
 )
+
+from .filters import TitlesFilter
+from .mixins import ListCreateDestroyViewSet
 from .serializers import (
     GenreSerializer,
     TitleSerializer,
@@ -15,28 +19,30 @@ from .serializers import (
 )
 
 
-class GenreviewSet(viewsets.ModelViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+    lookup_field = "slug"
 
-    def perform_create(self, serializer):
-        serializer.save
 
-
-class CategoryviewSet(viewsets.ModelViewSet):
+class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
-
-    def perform_create(self, serializer):
-        pass
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+    lookup_field = "slug"
 
 
 class TitleviewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
+    filter_backends = [DjangoFilterBackend]
+    filterset_class  = TitlesFilter
 
     def perform_create(self, serializer):
         pass
