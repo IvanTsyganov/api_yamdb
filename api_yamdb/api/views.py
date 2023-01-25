@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework import filters, mixins, pagination, permissions, viewsets
@@ -9,7 +10,8 @@ from reviews.models import Genre, Title, Category, Review, Comment, User
 from .permissions import (
     is_authenticated_Or_ReadOnlyPermission, IsAuthorOrReadOnly
 )
-
+from .filters import TitlesFilter
+from .mixins import ListCreateDestroyViewSet
 from .serializers import (
     GenreSerializer,
     TitleSerializer,
@@ -21,28 +23,40 @@ from .serializers import (
 )
 
 
-class GenreviewSet(viewsets.ModelViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
+    permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+    lookup_field = "slug"
 
-    def perform_create(self, serializer):
-        pass
 
-
-class CategoryviewSet(viewsets.ModelViewSet):
+class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
-
-    def perform_create(self, serializer):
-        pass
+    permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+    lookup_field = "slug"
 
 
 class TitleviewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = (is_authenticated_Or_ReadOnlyPermission,)
+    permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
+    filter_backends = [DjangoFilterBackend]
+    filterset_class  = TitlesFilter
+
+    def perform_create(self, serializer):
+        pass
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = (IsAuthorOrReadOnly,)
+    pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
         pass
