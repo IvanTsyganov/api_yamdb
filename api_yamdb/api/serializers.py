@@ -1,7 +1,9 @@
 import datetime
 from rest_framework import serializers
 
-from reviews.models import Category, Title, Genre, Review, Comment
+
+from reviews.models import Category, Title, Genre, User, Review, Comment
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -19,6 +21,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
+
     def validate_year(self,value):
         year_now = datetime.date.today().year
         if not (value <= year_now):
@@ -35,11 +38,34 @@ class TitleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Выберите категорию из ранее созданных')
         return value
 
+
     class Meta:
         model = Title
         fields = '__all__'
 
 
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    def create(self, validated_data):
+
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+        )
+
+        return user
+
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        
+        
 class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:

@@ -3,6 +3,30 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
+class User(AbstractUser):
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+    USER_ROLES = (
+        (USER, 'User'),
+        (MODERATOR, 'moderator'),
+        (ADMIN, 'admin')
+    )
+
+    role = models.CharField(
+        choices=USER_ROLES,
+        max_length=50,
+        default=USER
+    )
+    bio = models.TextField(
+        'Биография',
+        blank=True
+    )
+
+    def str(self):
+        return self.username
+
+
 class Category(models.Model):
     name = models.CharField(max_length=256,
                             verbose_name='Название категории',
@@ -59,29 +83,6 @@ class Title(models.Model):
         return self.name
 
 
-class User(AbstractUser):
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-    USER_ROLES = (
-        (USER, 'User'),
-        (MODERATOR, 'moderator'),
-        (ADMIN, 'admin')
-    )
-
-    role = models.CharField(
-        choices=USER_ROLES,
-        max_length=50,
-        default=USER
-    )
-    bio = models.TextField(
-        'Биография',
-        blank=True
-    )
-
-    def str(self):
-        return self.username
-
 
 class Review(models.Model):
     text = models.TextField()
@@ -98,7 +99,6 @@ class Review(models.Model):
         verbose_name='Произведение',
     )
     score = models.IntegerField(
-        default=0,
         validators=[MinValueValidator(1), MaxValueValidator(10)],
         verbose_name='Рейтинг',
     )
@@ -112,7 +112,7 @@ class Review(models.Model):
             ),
         )
 
-
+        
 class Comment(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
@@ -133,3 +133,6 @@ class Comment(models.Model):
     )
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ('-pub_date',)
