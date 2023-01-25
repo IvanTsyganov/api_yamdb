@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 # local
 from reviews.models import Genre, Title, Category, Review, Comment, User
 from .permissions import (
-    is_authenticated_Or_ReadOnlyPermission, IsAuthorOrReadOnly
+    IsAuthenticatedOrReadOnlyPermission, IsAuthorOrReadOnly
 )
 from .filters import TitlesFilter
 from .mixins import ListCreateDestroyViewSet
@@ -41,22 +41,12 @@ class CategoryViewSet(ListCreateDestroyViewSet):
     lookup_field = "slug"
 
 
-class TitleviewSet(viewsets.ModelViewSet):
+class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
     filter_backends = [DjangoFilterBackend]
-    filterset_class  = TitlesFilter
-
-    def perform_create(self, serializer):
-        pass
-
-
-class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-    permission_classes = (IsAuthorOrReadOnly,)
-    pagination_class = LimitOffsetPagination
+    filterset_class = TitlesFilter
 
     def perform_create(self, serializer):
         pass
