@@ -28,42 +28,60 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(max_length=50)
+    name = models.CharField(max_length=256,
+                            verbose_name='Название категории',
+                            help_text='Укажите название для категории')
+    slug = models.SlugField(max_length=50,
+                            unique=True,
+                            verbose_name='URL категории',
+                            help_text='Задайте уникальный URL адрес категории')
 
     def __str__(self):
         return self.name
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(max_length=50)
- 
+    name = models.CharField(max_length=256,
+                            verbose_name='Название жанра',
+                            help_text='Задайте название жанра')
+    slug = models.SlugField(max_length=50,
+                            verbose_name='URL жанра',
+                            help_text='Задайте уникальный URL адрес жанра.',
+                            unique=True)
+
     def __str__(self):
         return self.name
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=256)
-    year = models.IntegerField()
-    description = models.TextField(blank=True)
-    genre = models.ForeignKey(
-        Genre,
-        on_delete=models.CASCADE,
-        related_name='titles',
-        verbose_name='Жанр',
-        blank=True
-    )
+    name = models.CharField(max_length=256,
+                            verbose_name='Название произведения',
+                            help_text='Укажите название произведения')
+    year = models.IntegerField(verbose_name='Год выпуска',
+                               help_text='Укажите год выпуска произведения')
+    description = models.TextField(null=True,
+                                   blank=True,
+                                   verbose_name='Описание произведения')
+    genre = models.ManyToManyField(Genre,
+                                   verbose_name='Жанр произведения',
+                                   related_name='titles')
     category = models.ForeignKey(
         Category,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='titles',
-        verbose_name='Категория',
+        verbose_name='Категория произведения',
+        null=True,
         blank=True
+    )
+    rating = models.IntegerField(
+        null=True,
+        default=None,
+        verbose_name='Рейтинг произведения'
     )
 
     def __str__(self):
         return self.name
+
 
 
 class Review(models.Model):
