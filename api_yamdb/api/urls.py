@@ -8,14 +8,14 @@ from rest_framework_simplejwt.views import (
 )
 
 from .views import (
-    CategoryviewSet, GenreViewSet, TitleViewSet,
+    CategoryViewSet, GenreViewSet, TitleViewSet,
     ReviewViewSet, CommentViewSet, UserViewSet, SignUpViewSet
                     )
 router = routers.DefaultRouter()
 
 router.register('categories', CategoryViewSet, basename='category')
 router.register('genres', GenreViewSet, basename='genre')
-router.register('titles', TitleviewSet, basename='title')
+router.register('titles', TitleViewSet, basename='title')
 router.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='review')
 router.register(r'users', UserViewSet, basename='user')
