@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'djoser',
     'api.apps.ApiConfig',
     'reviews.apps.ReviewsConfig',
+    'users.apps.UsersConfig',
 ]
 
 AUTH_USER_MODEL = 'reviews.User'
@@ -137,3 +138,16 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+# укажем какую модель user использовать
+AUTH_USER_MODEL = 'users.User'
+
+# зарезервированное имя me
+RESERVED_NAME = 'me'
+# сообщения об ошибках
+MESSAGE_FOR_RESERVED_NAME = 'Имя пользователя "me" использовать нельзя!'
+MESSAGE_FOR_USER_NOT_FOUND = 'Пользователя с таким именем нет!'
+
+# настройки для отправки email в консоль
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'webmaster@localhost'

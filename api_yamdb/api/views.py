@@ -6,7 +6,8 @@ from rest_framework import filters, mixins, pagination, permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from django.shortcuts import get_object_or_404
 # local
-from reviews.models import Genre, Title, Category, Review, Comment, User
+from reviews.models import Genre, Title, Category, Review, Comment
+from users.models import User
 from .permissions import (
     IsAuthenticatedOrReadOnlyPermission, IsAuthorOrReadOnly
 )

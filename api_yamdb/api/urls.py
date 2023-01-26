@@ -6,11 +6,13 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-
 from .views import (
     CategoryViewSet, GenreViewSet, TitleViewSet,
     ReviewViewSet, CommentViewSet, UserViewSet, SignUpViewSet
                     )
+from users.views import APIUser, UserViewSetForAdmin
+
+
 router = routers.DefaultRouter()
 
 router.register('categories', CategoryViewSet, basename='category')
@@ -18,8 +20,7 @@ router.register('genres', GenreViewSet, basename='genre')
 router.register('titles', TitleViewSet, basename='title')
 router.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='review')
-router.register(r'users', UserViewSet, basename='user')
-router.register(r'signup', SignUpViewSet, basename='signup')
+router.register('users', UserViewSetForAdmin, basename='users')
 router.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
 router.register(
@@ -27,11 +28,7 @@ router.register(
     CommentViewSet, basename='comments')
 
 urlpatterns = [
+    path('v1/auth/', include('users.urls')),
+    path('v1/users/me/', APIUser.as_view(), name='me'),
     path('v1/', include(router.urls)),
-    path('v1/', include('djoser.urls')),
-    path('v1/', include('djoser.urls.jwt')),
-    path('v1/', include(router.urls)),
-    path('v1/auth/token/', views.obtain_auth_token),
-    path('api/v1/auth/signup/`', views.obtain_auth_token),
-    path('v1/auth/signup/', include(router.urls)),
 ]
