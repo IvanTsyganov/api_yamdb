@@ -12,39 +12,51 @@ from api_yamdb.settings import (MESSAGE_FOR_RESERVED_NAME,
 
 class CategorySerializer(serializers.ModelSerializer):
 
-    class Meta:
+     class Meta:
         model = Category
-        fields = '__all__'
+        exclude = ('id',)
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
 
 
 class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = '__all__'
+        exclude = ('id',)
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
 
 
 class TitleSerializer(serializers.ModelSerializer):
-
-    def validate_year(self,value):
-        year_now = datetime.date.today().year
-        if not (value <= year_now):
-            raise serializers.ValidationError('Проверьте год выпуска')
-        return value
-    
-    def validate_genre(self,value):
-        if not Genre.objects.filter(name = f'{value}').exists():
-            raise serializers.ValidationError('Выберите жанр из ранее созданных')
-        return value
-    
-    def validate_category(self,value):
-        if not Category.objects.filter(name = f'{value}').exists():
-            raise serializers.ValidationError('Выберите категорию из ранее созданных')
-        return value
+    genre = serializers.SlugRelatedField(
+        slug_field='slug', many=True, queryset=Genre.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug', queryset=Category.objects.all()
+    )
 
     class Meta:
         model = Title
         fields = '__all__'
+
+
+class ReadOnlyTitleSerializer(serializers.ModelSerializer):
+    rating = serializers.IntegerField(
+        source='reviews__score__avg', read_only=True
+    )
+    genre = GenreSerializer(many=True)
+    category = CategorySerializer()
+
+    class Meta:
+        model = Title
+        fields = (
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
+        )
 
 
 class UserSerializer(serializers.ModelSerializer):
