@@ -42,7 +42,6 @@ class TitleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Выберите категорию из ранее созданных')
         return value
 
-
     class Meta:
         model = Title
         fields = '__all__'

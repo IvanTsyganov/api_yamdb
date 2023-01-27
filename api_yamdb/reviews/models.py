@@ -60,7 +60,6 @@ class Title(models.Model):
         return self.name
 
 
-
 class Review(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
