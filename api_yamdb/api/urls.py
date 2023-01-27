@@ -6,10 +6,8 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import (
-    CategoryViewSet, GenreViewSet, TitleViewSet,
-    ReviewViewSet, CommentViewSet, UserViewSet, SignUpViewSet
-                    )
+from .views import (CategoryViewSet, GenreViewSet, TitleViewSet)
+from reviews.views import ReviewViewSet, CommentViewSet
 from users.views import APIUser, UserViewSetForAdmin
 
 
