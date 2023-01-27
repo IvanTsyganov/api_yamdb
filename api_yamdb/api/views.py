@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from reviews.models import Genre, Title, Category, Review, Comment
 from users.models import User
 from .permissions import (
-    IsAuthenticatedOrReadOnlyPermission, IsAuthorOrReadOnly,IsAdminOrReadOnly
+    IsAuthenticatedOrReadOnlyPermission, IsAuthorOrReadOnly, IsAdminOrReadOnly
 )
 from .filters import TitlesFilter
 from .mixins import ListCreateDestroyViewSet
@@ -19,8 +19,6 @@ from .serializers import (
     CategorySerializer,
     UserSerializer,
     SignUpSerializer,
-    ReviewSerializer,
-    CommentSerializer,
     ReadOnlyTitleSerializer,
 )
 
