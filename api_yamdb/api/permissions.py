@@ -3,7 +3,7 @@ from rest_framework import permissions
 from reviews.models import User
 
 
-class is_authenticated_Or_ReadOnlyPermission(permissions.BasePermission):
+class IsAuthenticatedOrReadOnlyPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return (

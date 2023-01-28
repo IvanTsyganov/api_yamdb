@@ -1,5 +1,7 @@
+import datetime
 from rest_framework import serializers
-
+from rest_framework.relations import SlugRelatedField
+#local
 from reviews.models import Category, Title, Genre, User, Review, Comment
 
 
@@ -16,6 +18,24 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
+
+    def validate_year(self,value):
+        year_now = datetime.date.today().year
+        if not (value <= year_now):
+            raise serializers.ValidationError('Проверьте год выпуска')
+        return value
+    
+    def validate_genre(self,value):
+        if not Genre.objects.filter(name = f'{value}').exists():
+            raise serializers.ValidationError('Выберите жанр из ранее созданных')
+        return value
+    
+    def validate_category(self,value):
+        if not Category.objects.filter(name = f'{value}').exists():
+            raise serializers.ValidationError('Выберите категорию из ранее созданных')
+        return value
+
+
     class Meta:
         model = Title
         fields = '__all__'
@@ -50,12 +70,17 @@ class UserSerializer(serializers.ModelSerializer):
 class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        
+        
+        
+class ReviewSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(slug_field='username', read_only=True)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ('id', 'author', 'text', 'score', 'pub_date')
 
 
 class CommentSerializer(serializers.ModelSerializer):
