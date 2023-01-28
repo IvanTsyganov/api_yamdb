@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from users.models import User
+from .validators import validate_year
 
 
 class Category(models.Model):
@@ -31,17 +32,26 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Название произведения',
-                            help_text='Укажите название произведения')
-    year = models.IntegerField(verbose_name='Год выпуска',
-                               help_text='Укажите год выпуска произведения')
-    description = models.TextField(null=True,
-                                   blank=True,
-                                   verbose_name='Описание произведения')
-    genre = models.ManyToManyField(Genre,
-                                   verbose_name='Жанр произведения',
-                                   related_name='titles')
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название произведения',
+        help_text='Укажите название произведения'
+    )
+    year = models.IntegerField(
+        verbose_name='Год выпуска',
+        help_text='Укажите год выпуска произведения',
+        validators=(validate_year,)
+    )
+    description = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='Описание произведения'
+    )
+    genre = models.ManyToManyField(
+        Genre,
+        verbose_name='Жанр произведения',
+        related_name='titles'
+    )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -88,7 +98,7 @@ class Review(models.Model):
             ),
         )
 
-        
+
 class Comment(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
