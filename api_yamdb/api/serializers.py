@@ -1,7 +1,7 @@
 import datetime
 from rest_framework import serializers, exceptions
 from rest_framework.relations import SlugRelatedField
-from rest_framework.validators import UniqueValidator
+from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
 #local
 from reviews.models import Category, Title, Genre, Review, Comment
 from users.models import User
@@ -82,11 +82,19 @@ class SignUpSerializer(serializers.ModelSerializer):
         
         
 class ReviewSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field='username', read_only=True)
+    author = serializers.SlugRelatedField(slug_field='username', read_only=True)
 
     class Meta:
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
         model = Review
-        fields = ('id', 'author', 'text', 'score', 'pub_date')
+
+    def validate(self, data):
+        author = self.context['request'].user
+        title_id = self.context['request'].parser_context['kwargs']['title_id']
+        if Review.objects.filter(author=author, title_id=title_id).exists():
+            raise serializers.ValidationError(
+                'Не более одного отзыва на произведение!')
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -146,19 +154,3 @@ class TokenSerializer(serializers.Serializer):
         if not User.objects.filter(username=value).exists():
             raise exceptions.NotFound(MESSAGE_FOR_USER_NOT_FOUND)
         return value
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field='username', read_only=True)
-
-    class Meta:
-        model = Comment
-        fields = ('id', 'text', 'author', 'pub_date')
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field='username', read_only=True)
-
-    class Meta:
-        model = Review
-        fields = ('id', 'author', 'text', 'score', 'pub_date')

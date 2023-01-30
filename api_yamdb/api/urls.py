@@ -16,8 +16,6 @@ router = routers.DefaultRouter()
 router.register('categories', CategoryViewSet, basename='category')
 router.register('genres', GenreViewSet, basename='genre')
 router.register('titles', TitleViewSet, basename='title')
-router.register(r'titles/(?P<title_id>\d+)/reviews',
-                ReviewViewSet, basename='review')
 router.register('users', UserViewSetForAdmin, basename='users')
 router.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')

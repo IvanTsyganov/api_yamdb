@@ -91,34 +91,21 @@ class Review(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        constraints = (
+        constraints = [
             models.UniqueConstraint(
-                fields=('title', 'author',),
+                fields=['author', 'title'],
                 name='unique_review'
             ),
-        )
+        ]
 
 
 class Comment(models.Model):
-    text = models.TextField()
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name='Автор комментария',
-    )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name='comments',
-    )
-    review = models.ForeignKey(
-        Review,
-        on_delete=models.CASCADE,
-        related_name='comments'
-    )
-    pub_date = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True)
+    review = models.ForeignKey(Review, on_delete=models.CASCADE,
+                               related_name='comments')
+    text = models.TextField(verbose_name='Комментарий',
+                            help_text='Введите текст комментария')
+    pub_date = models.DateTimeField(auto_now_add=True, db_index=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ('-pub_date',)
