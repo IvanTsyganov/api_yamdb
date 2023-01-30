@@ -1,7 +1,7 @@
-import datetime
 from rest_framework import serializers, exceptions
 from rest_framework.relations import SlugRelatedField
-from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
+from rest_framework.validators import UniqueValidator
+from django.db.models import Avg
 #local
 from reviews.models import Category, Title, Genre, Review, Comment
 from users.models import User
@@ -46,8 +46,8 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class ReadOnlyTitleSerializer(serializers.ModelSerializer):
-    rating = serializers.IntegerField(
-        source='reviews__score__avg', read_only=True
+    rating = serializers.SerializerMethodField(
+
     )
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
@@ -57,6 +57,13 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
         )
+
+    def get_rating(self, obj):
+        try:
+            rating = obj.reviews.aggregate(Avg('score'))
+            return rating.get('score__avg')
+        except TypeError:
+            return None
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -89,11 +96,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
 
     def validate(self, data):
-        author = self.context['request'].user
-        title_id = self.context['request'].parser_context['kwargs']['title_id']
-        if Review.objects.filter(author=author, title_id=title_id).exists():
-            raise serializers.ValidationError(
-                'Не более одного отзыва на произведение!')
+        if self.context['request'].method == 'POST':
+            author = self.context['request'].user
+            title_id = self.context['request'].parser_context['kwargs']['title_id']
+            if Review.objects.filter(author=author, title__id=title_id).exists():
+                raise serializers.ValidationError(
+                    'Не более одного отзыва на произведение!')
         return data
 
 
