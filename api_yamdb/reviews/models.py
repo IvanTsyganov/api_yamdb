@@ -81,14 +81,14 @@ class Review(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        constraints = (
+        constraints = [
             models.UniqueConstraint(
-                fields=('title', 'author'),
+                fields=['author', 'title'],
                 name='unique_review'
             ),
-        )
+        ]
 
-        
+
 class Comment(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE,
                                related_name='comments')
