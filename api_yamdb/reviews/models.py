@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 
 
 class User(AbstractUser):
@@ -12,6 +12,24 @@ class User(AbstractUser):
         (MODERATOR, 'moderator'),
         (ADMIN, 'admin')
     )
+    email = models.EmailField(
+        max_length=254,
+        unique=True
+    )
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+    )
+
+    first_name = models.EmailField(
+        max_length=150,
+        null=True
+    )
+
+    last_name = models.EmailField(
+        max_length=150,
+        null=True
+    )
 
     role = models.CharField(
         choices=USER_ROLES,
@@ -22,6 +40,17 @@ class User(AbstractUser):
         'Биография',
         blank=True
     )
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def str(self):
         return self.username

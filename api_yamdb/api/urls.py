@@ -1,12 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from .views import (
-    CategoryviewSet, GenreviewSet, TitleviewSet,
-    ReviewViewSet, CommentViewSet, UserViewSet, signup, TokenView
-
-from rest_framework.authtoken import views
-
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -14,8 +8,8 @@ from rest_framework_simplejwt.views import (
 
 from .views import (
     CategoryViewSet, GenreViewSet, TitleViewSet,
-    ReviewViewSet, CommentViewSet, UserViewSet, SignUpViewSet
-                    )
+    ReviewViewSet, CommentViewSet, UserViewSet, signup, obtain_token
+)
 router = routers.DefaultRouter()
 
 router.register('categories', CategoryViewSet, basename='category')
@@ -35,11 +29,7 @@ urlpatterns = [
     path('v1/', include('djoser.urls')),
     path('v1/', include('djoser.urls.jwt')),
     path('v1/auth/signup/', signup, name='signup'),
-    path('v1/auth/token/', TokenView, name='token'),
-
-
-    path('v1/', include(router.urls)),
-    path('v1/auth/token/', views.obtain_auth_token),
-    path('api/v1/auth/signup/`', views.obtain_auth_token),
-    path('v1/auth/signup/', include(router.urls)),
+    path('v1/auth/token/', obtain_token, name='token'),
 ]
+# path('v1/auth/token/', token_obtain, name='token'),
+# path('v1/users/me/', user_self_editing.as_view(), name='me'),

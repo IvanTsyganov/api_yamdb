@@ -1,5 +1,6 @@
 from random import randint
 
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 
 from requests import Response
@@ -14,6 +15,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import filters, mixins, pagination, permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenViewBase
 
 # local
@@ -21,20 +23,15 @@ from reviews.models import Genre, Title, Category, Review, Comment, User
 
 
 from .permissions import(
-    is_authenticated_Or_ReadOnlyPermission,
+    IsAuthenticatedOrReadOnlyPermission,
     IsAuthorOrReadOnly,
     AdminPermission,
 )
 
-from .serializers import(
 
-from .permissions import (
-    IsAuthenticatedOrReadOnlyPermission, IsAuthorOrReadOnly
-)
 from .filters import TitlesFilter
 from .mixins import ListCreateDestroyViewSet
 from .serializers import (
-
     GenreSerializer,
     TitleSerializer,
     CategorySerializer,
@@ -155,15 +152,25 @@ def signup(request):
     )
     send_mail(
         subject='Регистрация на сайте',
-        message='Здравствуйте. Вы получили это сообщение, так как ваш адрес был использован'
-        ' при регистрации нового пользователя на портале YamDB.'
-        f'Ваш проверочный код: {code_confirm}',
-        #serializer.initial_data['email'],
+        message=f'Ваш проверочный код: {code_confirm}',
         recipient_list=[user.email],
         fail_silently=False,
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class TokenView(TokenViewBase):
-    serializer_class = TokenSerializer
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def obtain_token(request):
+    serializer = TokenSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        user = get_object_or_404(
+            User, username=serializer.data['username'])
+        if default_token_generator.check_token(
+           user, serializer.data['confirmation_code']):
+            token = AccessToken.for_user(user)
+            return Response(
+                {'token': str(token)}, status=status.HTTP_200_OK)
+        return Response({
+            'confirmation code': 'Некорректный код подтверждения!'},
+            status=status.HTTP_400_BAD_REQUEST)
