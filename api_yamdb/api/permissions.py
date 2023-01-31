@@ -1,6 +1,5 @@
 from rest_framework import permissions
 # local
-from reviews.models import User
 
 
 class IsAuthenticatedOrReadOnlyPermission(permissions.BasePermission):
@@ -36,7 +35,6 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 
 class AdminPermission(permissions.BasePermission):
-
     def has_permission(self, request, view):
         return request.user.is_authenticated and (
-                request.user.is_admin or request.user.is_superuser)
+            request.user.is_admin or request.user.is_superuser)
