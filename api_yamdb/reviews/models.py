@@ -42,12 +42,20 @@ class User(AbstractUser):
         blank=True
     )
 
-    REQUIRED_FIELDS = ('email', 'password')
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     class Meta:
         ordering = ('id',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+        constraints = [
+            models.CheckConstraint(
+                check=~models.Q(username__iexact="me"),
+                name="username_is_not_me"
+            )
+        ]
 
     @property
     def is_moderator(self):

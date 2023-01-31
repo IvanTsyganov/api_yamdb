@@ -1,27 +1,25 @@
-from random import randint
-
 from django.contrib.auth.tokens import default_token_generator
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 
 from requests import Response
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters, mixins, pagination, permissions, viewsets, status
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework import filters, mixins, pagination, permissions, viewsets
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenViewBase
 from rest_framework.response import Response
 
 # local
-from reviews.models import Genre, Title, Category, User
-
+from reviews.models import Genre, Title, Category, User, Review
 
 from .permissions import(
     IsAuthenticatedOrReadOnlyPermission,
@@ -41,6 +39,9 @@ from .serializers import (
     SignUpSerializer,
     TokenSerializer,
     ReadOnlyTitleSerializer,
+    ReviewSerializer,
+    CommentSerializer,
+    OwnUserSerializer,
 )
 
 
@@ -78,32 +79,33 @@ class TitleViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (AdminPermission,)
-    pagination_class = PageNumberPagination
-    filter_backends = (SearchFilter,)
     lookup_field = 'username'
+    permission_classes = (AdminPermission,)
+    filter_backends = (SearchFilter,)
     search_fields = ('username',)
 
-
     @action(
-        ['GET', 'PATCH'], permission_classes=(IsAuthenticated,),
-        detail=False, url_path='me'
+        methods=['GET', 'PATCH'],
+        detail=False,
+        url_path='me',
+        permission_classes=(IsAuthenticated,)
     )
     def me_user(self, request):
-        if not request.data:
-            serializer = self.serializer_class(request.user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        serializer = self.serializer_class(
-            request.user, data=request.data, partial=True
-        )
+        if request.method == 'GET':
+            serializer = OwnUserSerializer(request.user)
+            return Response(serializer.data)
+        serializer = OwnUserSerializer(request.user,
+                                       data=request.data,
+                                       partial=True
+                                       )
         serializer.is_valid(raise_exception=True)
-        if request.user.role == 'admin':
-            serializer.update(request.user, serializer.validated_data)
-        else:
-            serializer.nonadmin_update(
-                request.user, serializer.validated_data
-            )
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        if request.method == 'PUT':
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().update(request, *args, **kwargs)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -141,9 +143,20 @@ class CommentViewSet(viewsets.ModelViewSet):
         return review_obj.comments
 
 
-def create_code_confirm_code_and_send_mail(username):
-
-    user = get_object_or_404(User, username=username)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def signup(request):
+    serializer = SignUpSerializer(data=request.data)
+    username = request.data.get("username")
+    email = request.data.get("email")
+    if not (serializer.is_valid()):
+        try:
+            User.objects.get(username=username, email=email)
+        except ObjectDoesNotExist:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+    user, created = User.objects.get_or_create(username=username, email=email)
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
         subject='Confirmation code',
@@ -151,15 +164,6 @@ def create_code_confirm_code_and_send_mail(username):
         from_email='admin@yamdb.xxx',
         recipient_list=[user.email]
     )
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def signup(request):
-    serializer = SignUpSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        serializer.save()
-    create_code_confirm_code_and_send_mail(serializer.data['username'])
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
