@@ -2,21 +2,38 @@
 **This is a final project of API module, part of python-developer course
 by yandex-practicum**
 
-# НАПОМИНАЛКА. НЕ ЗАБУДЬ РАСКОММЕНТИТЬ В gitignore всё в абзаце django stuff
-
 **Authors:**
 - Dmitriy Merkulov
 - Anton Ignatiev
 - Ivan Tsyganov
 
-
+# Description 
 We've prepared next features:
 
-- Django project with custom models, views and urls
+- Django project YaMDb keeps reviews by users on many titles of:
+  - books
+  - films
+  - music
+
+  You cal also give rating for all of them from 1 to 10 score 
+  or make a comment for any review from another user.
+
+  All titles are divided in many categories and genres.
+
 
 - REST API with CRUD functions
 
 - JWT-Token Authentication
+
+#Technical issue
+
+This project contains next roles:
+
+- Anon - can only read reviews, comments and titles descriptions.
+- User - All authorised users. Like Anon but also can publish reviews, give rates scores for all titles.
+- Moderator - Like User but he/she can also delete any reviews and comments.
+- Admin - everything you want, bro.
+- Django superuser - like Admin.
 
 # How to start it:
 1. fork this project
@@ -48,29 +65,33 @@ python manage.py runserver
 ```
 
 # How it works
-(JWT-token getting example)
+(registration and JWT-token getting example)
 
 0. Download and install any app for sending requests (I prefer "Postman") and start project
 
 <sub>(Next instruction was made for Postman)</sub>
 
-1. Create workspace and paste this url http://127.0.0.1:8000/api/v1/users/
+1. Create workspace and Paste this url /api/v1/auth/signup/
 2. Below url open raw tab ```Body -> raw```
 3. Write dict with keys "username" and "password" 
 ```
 {
-"username": "user",
-"password": "password"
+"email": "email",
+"username": "user"
 } 
 ```
-4. Select type "post" and send request
-5. If you made all right you will get http response with 201 status
-6. Now send post request to http://127.0.0.1:8000/api/v1/jwt/create 
-with same dict in raw
-7. You will accept dict with "refresh" and "access" keys (lifetime =  1 day)
-8. Go to "Headers"
-9. Paste "Authorization" in "KEY" and "Bearer <your_access>" in "VALUE" variables
-10. Congrats. You can send any request in other urls. See examples here:
+5. You'll get on email confirmation_code. Use it for getting JWT-token
+6. Paste this url http://127.0.0.1:8000/api/v1/auth/token/ and write this dict in raw
+```
+{
+"username": "user",
+"confirmation_code": "code from email"
+} 
+```
+7. Select type "post" and send request
+8. If you made all right you will get http response with 201 status and JWT-token
+9. Now send any response with this token (paste in Bearer)
+
 
 - run server
 ```
