@@ -1,3 +1,4 @@
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers, exceptions
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
@@ -70,7 +71,6 @@ class UserSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             password=validated_data['password'],
         )
-
         return user
 
     def nonadmin_update(self, instance, validated_data):
@@ -116,11 +116,12 @@ class CommentSerializer(serializers.ModelSerializer):
 class SignUpSerializer(Serializer):
     email = serializers.EmailField(
         max_length=254,
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        required=True,
     )
-    username = serializers.EmailField(
+    username = serializers.CharField(
         max_length=150,
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        validators=[UnicodeUsernameValidator()],
+        required=True,
     )
 
     class Meta:
@@ -130,23 +131,19 @@ class SignUpSerializer(Serializer):
         )
         read_only_fields = ('role',)
 
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            email=validated_data['email'],
+            username=validated_data['username'],
+        )
+        return user
+
     def validate_username(self, value):
-        if value.lower() == 'me' and '^[\w.@+-]+\z' not in value:
+        if value.lower() == 'me' and r'^[\w.@+-]+\z' not in value:
             raise serializers.ValidationError('Недопустимое имя пользователя!')
         return value
 
 
 class TokenSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150, required=True)
-    confirmation_code = serializers.CharField(max_length=200, required=True)
-
-    def validate_username(self, value):
-        if value.lower() == 'me' and '^[\w.@+-]+\z' not in value:
-            raise serializers.ValidationError('Недопустимое имя пользователя!')
-        if not User.objects.filter(username=value).exists():
-            raise exceptions.NotFound('Пользователя не существует!')
-        return value
-
-
-class AdminSerializer(serializers.Serializer):
-    pass
+    username = serializers.CharField()
+    confirmation_code = serializers.CharField()
