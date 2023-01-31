@@ -26,6 +26,7 @@ from .permissions import(
     IsAuthenticatedOrReadOnlyPermission,
     IsAuthorOrReadOnly,
     AdminPermission,
+    IsAdminOrReadOnly
 )
 
 
@@ -39,14 +40,15 @@ from .serializers import (
     ReviewSerializer,
     CommentSerializer,
     SignUpSerializer,
-    TokenSerializer
+    TokenSerializer,
+    ReadOnlyTitleSerializer
 )
 
 
 class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = "slug"
@@ -55,7 +57,7 @@ class GenreViewSet(ListCreateDestroyViewSet):
 class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = "slug"
@@ -64,12 +66,14 @@ class CategoryViewSet(ListCreateDestroyViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = (IsAuthenticatedOrReadOnlyPermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitlesFilter
 
-    def perform_create(self, serializer):
-        pass
+    def get_serializer_class(self):
+        if self.action in ("retrieve", "list"):
+            return ReadOnlyTitleSerializer
+        return TitleSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

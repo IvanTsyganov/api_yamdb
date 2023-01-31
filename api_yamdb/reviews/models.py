@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from .validators import validate_year
 
 
 class User(AbstractUser):
@@ -57,43 +58,58 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Название категории',
-                            help_text='Укажите название для категории')
-    slug = models.SlugField(max_length=50,
-                            unique=True,
-                            verbose_name='URL категории',
-                            help_text='Задайте уникальный URL адрес категории')
+    name = models.CharField(
+        max_length=256, verbose_name='Название категории',
+        help_text='Укажите название для категории'
+    )
+    slug = models.SlugField(
+        max_length=50,
+        unique=True,
+        verbose_name='URL категории',
+        help_text='Задайте уникальный URL адрес категории'
+    )
 
     def __str__(self):
         return self.name
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Название жанра',
-                            help_text='Задайте название жанра')
-    slug = models.SlugField(max_length=50,
-                            verbose_name='URL жанра',
-                            help_text='Задайте уникальный URL адрес жанра.',
-                            unique=True)
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название жанра',
+        help_text='Задайте название жанра'
+    )
+    slug = models.SlugField(
+        max_length=50,
+        verbose_name='URL жанра',
+        help_text='Задайте уникальный URL адрес жанра.',
+        unique=True
+    )
 
     def __str__(self):
         return self.name
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Название произведения',
-                            help_text='Укажите название произведения')
-    year = models.IntegerField(verbose_name='Год выпуска',
-                               help_text='Укажите год выпуска произведения')
-    description = models.TextField(null=True,
-                                   blank=True,
-                                   verbose_name='Описание произведения')
-    genre = models.ManyToManyField(Genre,
-                                   verbose_name='Жанр произведения',
-                                   related_name='titles')
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название произведения',
+        help_text='Укажите название произведения'
+    )
+    year = models.IntegerField(
+        verbose_name='Год выпуска',
+        help_text='Укажите год выпуска произведения',
+        validators=(validate_year,)
+    )
+    description = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='Описание произведения'
+    )
+    genre = models.ManyToManyField(
+        Genre,
+        verbose_name='Жанр произведения',
+        related_name='titles')
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -110,7 +126,6 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
-
 
 
 class Review(models.Model):
@@ -141,7 +156,7 @@ class Review(models.Model):
             ),
         )
 
-        
+
 class Comment(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
