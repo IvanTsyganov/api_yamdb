@@ -139,11 +139,50 @@ class SignUpSerializer(Serializer):
         return user
 
     def validate_username(self, value):
-        if value.lower() == 'me' and r'^[\w.@+-]+\z' not in value:
-            raise serializers.ValidationError('Недопустимое имя пользователя!')
+        if value.lower() == 'me':
+            raise serializers.ValidationError('Username not available!')
+        if (
+            User.objects.filter(username=value).exists()
+            and not User.objects.filter(
+                email=self.initial_data.get('email')
+            ).exists()
+        ):
+            raise serializers.ValidationError('Username`s busy!')
         return value
+
+    def validate_email(self, email):
+        if (
+            not User.objects.filter(
+                username=self.initial_data.get('username')
+            ).exists()
+            and User.objects.filter(email=email).exists()
+        ):
+            raise serializers.ValidationError('This email alredy registered!')
+        return email
 
 
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
+
+
+class OwnUserSerializer(serializers.ModelSerializer):
+    username = serializers.RegexField(
+        regex=r'^[\w.@+-]',
+        max_length=150,
+        validators=[UniqueValidator(queryset=User.objects.all())],
+        required=True,
+    )
+    email = serializers.EmailField(
+        max_length=254,
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+    first_name = serializers.CharField(max_length=150)
+    last_name = serializers.CharField(max_length=150)
+
+    class Meta:
+        fields = '__all__'
+        model = User
+        read_only_fields = ('role', )
