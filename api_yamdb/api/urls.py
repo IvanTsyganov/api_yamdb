@@ -1,15 +1,13 @@
 from django.urls import path, include
 from rest_framework import routers
-
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
-
+# local
 from .views import (
-    CategoryViewSet, GenreViewSet, TitleViewSet,
-    ReviewViewSet, CommentViewSet, UserViewSet, signup, obtain_token
+    CategoryViewSet, GenreViewSet,
+    TitleViewSet, UserViewSet, signup, obtain_token
 )
+from reviews.views import ReviewViewSet, CommentViewSet
+
+
 router = routers.DefaultRouter()
 
 router.register('categories', CategoryViewSet, basename='category')
