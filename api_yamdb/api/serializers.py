@@ -4,7 +4,6 @@ from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
 from rest_framework.validators import UniqueValidator
 from django.db.models import Avg
-
 # local
 from reviews.models import Category, Title, Genre, User, Review, Comment
 
@@ -90,19 +89,28 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field='username', read_only=True)
+    author = serializers.SlugRelatedField(slug_field='username', read_only=True)
 
-
-class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
         model = Review
-        fields = ('id', 'author', 'text', 'score', 'pub_date')
+
+    def validate(self, data):
+        if self.context['request'].method == 'POST':
+            author = self.context['request'].user
+            title_id = self.context['request'].parser_context['kwargs']['title_id']
+            if Review.objects.filter(author=author, title__id=title_id).exists():
+                raise serializers.ValidationError(
+                    'Не более одного отзыва на произведение!')
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(slug_field='username', read_only=True)
+
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'pub_date')
 
 
 class SignUpSerializer(Serializer):
