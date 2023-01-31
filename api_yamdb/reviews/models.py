@@ -1,6 +1,6 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from .validators import validate_year
 
 
@@ -35,12 +35,19 @@ class User(AbstractUser):
     role = models.CharField(
         choices=USER_ROLES,
         max_length=50,
-        default=USER
+        default=USER,
     )
     bio = models.TextField(
         'Биография',
         blank=True
     )
+
+    REQUIRED_FIELDS = ('email', 'password')
+
+    class Meta:
+        ordering = ('id',)
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     @property
     def is_moderator(self):

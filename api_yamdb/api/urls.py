@@ -31,5 +31,3 @@ urlpatterns = [
     path('v1/auth/signup/', signup, name='signup'),
     path('v1/auth/token/', obtain_token, name='token'),
 ]
-# path('v1/auth/token/', token_obtain, name='token'),
-# path('v1/users/me/', user_self_editing.as_view(), name='me'),

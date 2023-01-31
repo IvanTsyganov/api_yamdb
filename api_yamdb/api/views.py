@@ -17,6 +17,7 @@ from rest_framework.pagination import LimitOffsetPagination, PageNumberPaginatio
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenViewBase
+from rest_framework.response import Response
 
 # local
 from reviews.models import Genre, Title, Category, Review, Comment, User
@@ -41,7 +42,7 @@ from .serializers import (
     CommentSerializer,
     SignUpSerializer,
     TokenSerializer,
-    ReadOnlyTitleSerializer
+    ReadOnlyTitleSerializer,
 )
 
 
@@ -82,7 +83,6 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (AdminPermission,)
     pagination_class = PageNumberPagination
     filter_backends = (SearchFilter,)
-
     lookup_field = 'username'
     search_fields = ('username',)
 
@@ -143,23 +143,25 @@ class CommentViewSet(viewsets.ModelViewSet):
         return review_obj.comments
 
 
+def create_code_confirm_code_and_send_mail(username):
+
+    user = get_object_or_404(User, username=username)
+    confirmation_code = default_token_generator.make_token(user)
+    send_mail(
+        subject='Confirmation code',
+        message=f'Your confirmation code {confirmation_code}',
+        from_email='admin@yamdb.xxx',
+        recipient_list=[user.email]
+    )
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
     serializer = SignUpSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    code_confirm = str(randint(1001, 9999))
-    user = User.objects.get_or_create(
-        username=serializer.data.get('username'),
-        email=serializer.data.get('email'),
-        confirmation_code=code_confirm
-    )
-    send_mail(
-        subject='Регистрация на сайте',
-        message=f'Ваш проверочный код: {code_confirm}',
-        recipient_list=[user.email],
-        fail_silently=False,
-    )
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+    create_code_confirm_code_and_send_mail(serializer.data['username'])
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
