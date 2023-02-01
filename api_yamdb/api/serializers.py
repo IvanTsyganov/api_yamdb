@@ -1,5 +1,5 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from rest_framework import serializers, exceptions
+from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
 from rest_framework.validators import UniqueValidator
@@ -14,7 +14,7 @@ class CategorySerializer(serializers.ModelSerializer):
         exclude = ('id',)
         lookup_field = 'slug'
         extra_kwargs = {
-            'url':{'lookup_field':'slug'}
+            'url': {'lookup_field': 'slug'}
         }
 
 
@@ -24,7 +24,7 @@ class GenreSerializer(serializers.ModelSerializer):
         exclude = ('id',)
         lookup_field = 'slug'
         extra_kwargs = {
-            'url':{'lookup_field': 'slug'}
+            'url': {'lookup_field': 'slug'}
         }
 
 
@@ -76,6 +76,18 @@ class UserSerializer(serializers.ModelSerializer):
             UniqueValidator(queryset=User.objects.all())
         ]
     )
+    username = serializers.RegexField(
+        regex=r'^[\w.@+-]',
+        max_length=150,
+        validators=[UniqueValidator(queryset=User.objects.all())],
+        required=True,
+    )
+    email = serializers.EmailField(
+        max_length=254,
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
 
     class Meta:
         fields = ('username', 'email', 'first_name',
@@ -84,7 +96,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True
+    )
 
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date')
@@ -93,8 +108,13 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if self.context['request'].method == 'POST':
             author = self.context['request'].user
-            title_id = self.context['request'].parser_context['kwargs']['title_id']
-            if Review.objects.filter(author=author, title__id=title_id).exists():
+            title_id = (
+                self.context['request'].parser_context['kwargs']['title_id']
+            )
+            if Review.objects.filter(
+                    author=author,
+                    title__id=title_id
+            ).exists():
                 raise serializers.ValidationError(
                     'Не более одного отзыва на произведение!')
         return data
@@ -126,12 +146,6 @@ class SignUpSerializer(Serializer):
         )
         read_only_fields = ('role',)
 
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            email=validated_data['email'],
-            username=validated_data['username'],
-        )
-        return user
 
     def validate_username(self, value):
         if value.lower() == 'me':
@@ -152,7 +166,7 @@ class SignUpSerializer(Serializer):
             ).exists()
             and User.objects.filter(email=email).exists()
         ):
-            raise serializers.ValidationError('This email alredy registered!')
+            raise serializers.ValidationError('This email already registered!')
         return email
 
 

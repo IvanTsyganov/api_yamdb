@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from .validators import validate_year
@@ -19,7 +19,6 @@ class User(AbstractUser):
         max_length=254,
         unique=True,
         blank=False,
-        null=False
     )
     username = models.CharField(
         verbose_name='Имя пользователя',
