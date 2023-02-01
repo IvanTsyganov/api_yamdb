@@ -64,28 +64,23 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            password=validated_data['password'],
-        )
-        return user
-
-    def nonadmin_update(self, instance, validated_data):
-        validated_data.pop('role', None)
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
+    username = serializers.RegexField(
+        regex=r'^[\w.@+-]',
+        max_length=150,
+        validators=[UniqueValidator(queryset=User.objects.all())],
+        required=True,
+    )
+    email = serializers.EmailField(
+        max_length=254,
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
 
     class Meta:
+        fields = ('username', 'email', 'first_name',
+                  'last_name', 'bio', 'role')
         model = User
-        fields = (
-            'username', 'email', 'password', 'first_name', 'last_name',
-            'bio', 'role'
-        )
 
 
 class ReviewSerializer(serializers.ModelSerializer):

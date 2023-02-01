@@ -5,48 +5,42 @@ from .validators import validate_year
 
 
 class User(AbstractUser):
-    USER = 'user'
-    MODERATOR = 'moderator'
     ADMIN = 'admin'
-    USER_ROLES = (
+    MODERATOR = 'moderator'
+    USER = 'user'
+    ROLES = [
+        (ADMIN, 'Administrator'),
+        (MODERATOR, 'Moderator'),
         (USER, 'User'),
-        (MODERATOR, 'moderator'),
-        (ADMIN, 'admin')
-    )
+    ]
+
     email = models.EmailField(
+        verbose_name='Адрес электронной почты',
         max_length=254,
-        unique=True
+        unique=True,
+        blank=False,
+        null=False
     )
     username = models.CharField(
+        verbose_name='Имя пользователя',
         max_length=150,
-        unique=True,
+        null=True,
+        unique=True
     )
-
-    first_name = models.EmailField(
-        max_length=150,
-        null=True
-    )
-
-    last_name = models.EmailField(
-        max_length=150,
-        null=True
-    )
-
     role = models.CharField(
-        choices=USER_ROLES,
+        verbose_name='Роль',
         max_length=50,
-        default=USER,
+        choices=ROLES,
+        default=USER
     )
     bio = models.TextField(
-        'Биография',
+        verbose_name='О себе',
+        null=True,
         blank=True
     )
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
     class Meta:
-        ordering = ('id',)
+        ordering = ['id']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
@@ -67,9 +61,6 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-
-    def str(self):
-        return self.username
 
 
 class Category(models.Model):
