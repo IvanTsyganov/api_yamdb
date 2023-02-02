@@ -17,17 +17,18 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
 
 # local
-from reviews.models import Genre, Title, Category, User, Review
+from reviews.models import Genre, Title, Category, Review
+from users.models import User
 
-from .permissions import (
+from api.v1.permissions import (
     IsAuthorOrReadOnly,
     AdminPermission,
     IsAdminOrReadOnly
 )
 
-from .filters import TitlesFilter
-from .mixins import ListCreateDestroyViewSet
-from .serializers import (
+from api.v1.filters import TitlesFilter
+from api.v1.mixins import ListCreateDestroyViewSet
+from api.v1.serializers import (
     GenreSerializer,
     TitleSerializer,
     CategorySerializer,

@@ -1,76 +1,8 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+
 from .validators import validate_year
-
-
-class User(AbstractUser):
-    ADMIN = 'admin'
-    MODERATOR = 'moderator'
-    USER = 'user'
-    USER_ROLES = [
-        (ADMIN, 'Administrator'),
-        (MODERATOR, 'Moderator'),
-        (USER, 'User'),
-    ]
-
-    email = models.EmailField(
-        max_length=254,
-        unique=True,
-        blank=False,
-        null=False
-    )
-    username = models.CharField(
-        max_length=150,
-        unique=True,
-        null=True,
-    )
-
-    first_name = models.EmailField(
-        max_length=150,
-        null=True
-    )
-
-    last_name = models.EmailField(
-        max_length=150,
-        null=True
-    )
-
-    role = models.CharField(
-        choices=USER_ROLES,
-        max_length=50,
-        default=USER,
-    )
-    bio = models.TextField(
-        'Биография',
-        blank=True
-    )
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
-    class Meta:
-        ordering = ('id',)
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
-        constraints = [
-            models.CheckConstraint(
-                check=~models.Q(username__iexact="me"),
-                name="username_is_not_me"
-            )
-        ]
-
-    @property
-    def is_moderator(self):
-        return self.role == self.MODERATOR
-
-    @property
-    def is_admin(self):
-        return self.role == self.ADMIN
-
-    def str(self):
-        return self.username
+from users.models import User
 
 
 class Category(models.Model):
