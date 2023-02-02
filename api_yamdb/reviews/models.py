@@ -5,14 +5,15 @@ from .validators import validate_year
 
 
 class User(AbstractUser):
-    USER = 'user'
-    MODERATOR = 'moderator'
     ADMIN = 'admin'
-    USER_ROLES = (
+    MODERATOR = 'moderator'
+    USER = 'user'
+    USER_ROLES = [
+        (ADMIN, 'Administrator'),
+        (MODERATOR, 'Moderator'),
         (USER, 'User'),
-        (MODERATOR, 'moderator'),
-        (ADMIN, 'admin')
-    )
+    ]
+
     email = models.EmailField(
         max_length=254,
         unique=True,
@@ -22,7 +23,7 @@ class User(AbstractUser):
     username = models.CharField(
         max_length=150,
         unique=True,
-        null=True
+        null=True,
     )
 
     first_name = models.EmailField(
@@ -67,9 +68,6 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         return self.role == self.ADMIN
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
 
     def str(self):
         return self.username
