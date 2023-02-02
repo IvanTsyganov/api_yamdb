@@ -1,24 +1,17 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
-
-from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework import filters, permissions, viewsets
-from rest_framework.pagination import LimitOffsetPagination
 from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import status, filters, permissions, viewsets
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
-
 # local
 from reviews.models import Genre, Title, Category, User, Review
-
 from .permissions import (
     IsAuthorOrReadOnly,
     AdminPermission,

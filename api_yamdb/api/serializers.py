@@ -1,9 +1,9 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
 from rest_framework.validators import UniqueValidator
-from django.db.models import Avg
 # local
 from reviews.models import Category, Title, Genre, User, Review, Comment
 
@@ -64,18 +64,6 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.RegexField(
-        regex=r'^[\w.@+-]',
-        max_length=150,
-        validators=[UniqueValidator(queryset=User.objects.all())],
-        required=True,
-    )
-    email = serializers.EmailField(
-        max_length=254,
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
     username = serializers.RegexField(
         regex=r'^[\w.@+-]',
         max_length=150,
