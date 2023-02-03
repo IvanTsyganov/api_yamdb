@@ -5,7 +5,8 @@ from rest_framework.serializers import Serializer
 from rest_framework.validators import UniqueValidator
 from django.db.models import Avg
 # local
-from reviews.models import Category, Title, Genre, User, Review, Comment
+from reviews.models import Category, Title, Genre, Review, Comment
+from users.models import User
 
 
 class CategorySerializer(serializers.ModelSerializer):
