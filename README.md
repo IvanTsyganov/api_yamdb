@@ -1,13 +1,13 @@
-# YaMDb projecct
-**This is a final project of API module, part of python-developer course
-by yandex-practicum**
+# YaMDd projecct
+This is a final project of API module, part of python-developer course
+by yandex-practicum
 
-**Authors:**
+## Authors:
 - Dmitriy Merkulov
 - Anton Ignatiev
 - Ivan Tsyganov
 
-# Description 
+## Description 
 We've prepared next features:
 
 - Django project YaMDb keeps reviews by users on many titles of:
@@ -25,7 +25,7 @@ We've prepared next features:
 
 - JWT-Token Authentication
 
-#Technical issue
+## Technical issue
 
 This project contains next roles:
 
@@ -35,36 +35,40 @@ This project contains next roles:
 - Admin - everything you want, bro.
 - Django superuser - like Admin.
 
-# How to start it:
+## ReDoc
+
+http://127.0.0.1:8000/redoc.html  
+
+## How to start it:
 1. fork this project
 2. Open terminal and clone this repository:
 ```
-git clone https://github.com/<your_git>/api_yamdb.git
+(bash) git clone https://github.com/<your_git>/api_yamdb.git
 ```
-2. create and start virtual environment(windows):
+3. create and start virtual environment(windows):
 ```
 python -m venv venv
 ```
 ```
 . venv/Scripts/activate
 ```
-3. Install dependencies from requirements.txt
+4. Install dependencies from requirements.txt
 ```
 pip install -r requirements.txt
 ```
-4. Make migrations:
+5. Make migrations:
 ```
 python manage.py makemigrations
 ```
 ```
 python manage.py migrate
 ```
-5. Start project:
+6. Start project:
 ```
 python manage.py runserver
 ```
 
-# How it works
+## How it works
 (registration and JWT-token getting example)
 
 0. Download and install any app for sending requests (I prefer "Postman") and start project

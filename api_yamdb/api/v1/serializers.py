@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
 from rest_framework.validators import UniqueValidator
-# local
+
 from reviews.models import Category, Title, Genre, User, Review, Comment
 
 
@@ -133,7 +133,6 @@ class SignUpSerializer(Serializer):
             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
         )
         read_only_fields = ('role',)
-
 
     def validate_username(self, value):
         if value.lower() == 'me':
