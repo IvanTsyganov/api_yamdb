@@ -1,4 +1,4 @@
-# YaMDd projecct
+# YaMDb project
 This is a final project of API module, part of python-developer course
 by yandex-practicum
 

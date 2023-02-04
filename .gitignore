@@ -150,4 +150,4 @@ media/
 
 # .csv файлы кроме пути static/data/.csv
 .csv
-!static/data/.csv
+!api_yamdb/static/data/.csv
