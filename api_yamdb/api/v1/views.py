@@ -10,7 +10,8 @@ from rest_framework import status, filters, viewsets
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
 
-from reviews.models import Genre, Title, Category, User, Review
+from reviews.models import Genre, Title, Category, Review
+from users.models import User
 from .permissions import (
     AdminPermission,
     IsAdminOrReadOnly,
