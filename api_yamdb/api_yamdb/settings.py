@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -27,9 +26,10 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api.apps.ApiConfig',
     'reviews.apps.ReviewsConfig',
+    'users'
 ]
 
-AUTH_USER_MODEL = 'reviews.User'
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -130,5 +130,3 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
-
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')

@@ -5,6 +5,6 @@ from django.core.exceptions import ValidationError
 def validate_year(value):
     if value > timezone.now().year:
         raise ValidationError(
-            ('Год %(value)s больше текущего!'),
+            (f'Год %({value})s не может быть больше текущего!'),
             params={'value': value},
         )
