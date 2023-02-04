@@ -105,3 +105,23 @@ python manage.py runserver
 ```
 go to - http://127.0.0.1:8000/redoc.html
 ```
+
+## Import .csv
+0. Download and install sqlite
+```
+https://www.sqlite.org/download.html
+```
+1. Open Sqlite
+2. Find database(db.sqlite3):
+```
+(root)/api_yamdb/
+```
+3. Choose data type and table. Use '.mode' command to import(example):
+```
+.mode csv reviews_title
+```
+4. Import .csv-file to right table
+```
+.import titles.csv reviews_title
+```
+5. Repeat for all .csv-files
