@@ -5,34 +5,29 @@ from .validators import validate_year
 from users.models import User
 
 
-class Category(models.Model):
+class GenreCategoryAbstract(models.Model):
     name = models.CharField(
-        max_length=256, verbose_name='Название категории',
-        help_text='Укажите название для категории'
+        max_length=256, verbose_name='Название',
+        help_text='Укажите название.'
     )
     slug = models.SlugField(
         max_length=50,
-        unique=True,
-        verbose_name='URL категории',
-        help_text='Задайте уникальный URL адрес категории'
+        verbose_name='URL',
+        help_text='Задайте уникальный URL.',
+        unique=True
     )
+
+    class Meta:
+        abstract = True
+
+
+class Category(GenreCategoryAbstract):
 
     def __str__(self):
         return self.name
 
 
-class Genre(models.Model):
-    name = models.CharField(
-        max_length=256,
-        verbose_name='Название жанра',
-        help_text='Задайте название жанра'
-    )
-    slug = models.SlugField(
-        max_length=50,
-        verbose_name='URL жанра',
-        help_text='Задайте уникальный URL адрес жанра.',
-        unique=True
-    )
+class Genre(GenreCategoryAbstract):
 
     def __str__(self):
         return self.name
@@ -44,7 +39,7 @@ class Title(models.Model):
         verbose_name='Название произведения',
         help_text='Укажите название произведения'
     )
-    year = models.IntegerField(
+    year = models.SmallIntegerField(
         verbose_name='Год выпуска',
         help_text='Укажите год выпуска произведения',
         validators=(validate_year,)
@@ -85,9 +80,6 @@ class ReviewCommentAbstract(models.Model):
 
     class Meta:
         abstract = True
-
-    def __str__(self):
-        return self.text
 
 
 class Review(ReviewCommentAbstract):

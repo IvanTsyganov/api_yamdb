@@ -148,3 +148,6 @@ dmypy.json
 # папки со статикой и медиа
 media/
 
+# .csv файлы кроме пути static/data/.csv
+.csv
+!static/data/.csv
