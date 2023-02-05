@@ -151,3 +151,5 @@ media/
 # .csv файлы кроме пути static/data/.csv
 *.csv
 !api_yamdb/static/data/*.csv
+
+sqlite3.exe
