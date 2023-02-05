@@ -130,3 +130,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
+DOMAIN_NAME = 'yamdb.xxx'
+ADMIN_EMAIL = f'admin@{DOMAIN_NAME}'
+FORBIDDEN_NAMES = ['me',]

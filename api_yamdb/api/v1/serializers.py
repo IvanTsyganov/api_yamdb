@@ -3,8 +3,8 @@ from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
-from rest_framework.validators import UniqueValidator
 
+from django.conf import settings
 from reviews.models import Category, Title, Genre, Review, Comment
 from users.models import User
 
@@ -65,18 +65,6 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.RegexField(
-        regex=r'^[\w.@+-]',
-        max_length=150,
-        validators=[UniqueValidator(queryset=User.objects.all())],
-        required=True,
-    )
-    email = serializers.EmailField(
-        max_length=254,
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
 
     class Meta:
         fields = ('username', 'email', 'first_name',
@@ -128,58 +116,25 @@ class SignUpSerializer(Serializer):
         required=True,
     )
 
-    class Meta:
-        model = User
-        fields = (
-            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
-        )
-        read_only_fields = ('role',)
-
     def validate_username(self, value):
-        if value.lower() == 'me':
+        if value.lower() in settings.FORBIDDEN_NAMES:
             raise serializers.ValidationError('Username not available!')
-        if (
-            User.objects.filter(username=value).exists()
-            and not User.objects.filter(
-                email=self.initial_data.get('email')
-            ).exists()
-        ):
-            raise serializers.ValidationError('Username`s busy!')
         return value
 
-    def validate_email(self, email):
-        if (
-            not User.objects.filter(
-                username=self.initial_data.get('username')
-            ).exists()
-            and User.objects.filter(email=email).exists()
-        ):
-            raise serializers.ValidationError('This email already registered!')
-        return email
+    def validate(self, attrs):
+        username = attrs['username']
+        email = attrs['email']
+        if (User.objects.filter(
+                email=email
+        ).exclude(
+            username=username
+        ).exists() or User.objects.filter(
+            username=username
+        ).exclude(email=email).exists()):
+            raise serializers.ValidationError({'email': 'Имя занято'})
+        return attrs
 
 
 class TokenSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    confirmation_code = serializers.CharField()
-
-
-class OwnUserSerializer(serializers.ModelSerializer):
-    username = serializers.RegexField(
-        regex=r'^[\w.@+-]',
-        max_length=150,
-        validators=[UniqueValidator(queryset=User.objects.all())],
-        required=True,
-    )
-    email = serializers.EmailField(
-        max_length=254,
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
-    first_name = serializers.CharField(max_length=150)
-    last_name = serializers.CharField(max_length=150)
-
-    class Meta:
-        fields = '__all__'
-        model = User
-        read_only_fields = ('role', )
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
