@@ -107,9 +107,9 @@ go to - http://127.0.0.1:8000/redoc.html
 ```
 
 ## Import .csv
-0. Download and install sqlitestudio
+0. Download and install sqlite
 ```
-https://sqlitestudio.pl/
+https://www.sqlite.org/download.html
 ```
 ### WARNING
 Model Title contains foreign keys from Genre and Categories models, you must first import csv files into Genre and Categories, and then into Title, in order to avoid errors
