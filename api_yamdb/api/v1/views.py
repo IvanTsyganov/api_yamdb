@@ -5,10 +5,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, filters, viewsets
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
+from rest_framework.permissions import (
+    IsAuthenticated,
+    AllowAny,
+    IsAuthenticatedOrReadOnly
+)
 
 from reviews.models import Genre, Title, Category, Review
 from users.models import User
@@ -99,11 +103,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthorOrAdminOrModerOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,
+                          IsAuthorOrAdminOrModerOrReadOnly,)
 
     def get_title(self):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        return title
+        return get_object_or_404(Title, id=self.kwargs.get('title_id'))
 
     def get_queryset(self):
         title_obj = self.get_title()
@@ -116,12 +120,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthorOrAdminOrModerOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,
+                          IsAuthorOrAdminOrModerOrReadOnly,)
 
     def get_review(self):
-        review = get_object_or_404(Review, id=self.kwargs.get('review_id'),
-                                   title__id=self.kwargs.get('title_id'))
-        return review
+        return get_object_or_404(Review, id=self.kwargs.get('review_id'),
+                                 title__id=self.kwargs.get('title_id'))
 
     def get_queryset(self):
         review_obj = self.get_review()
