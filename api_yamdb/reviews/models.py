@@ -1,8 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from .validators import validate_year
 from users.models import User
+from .validators import validate_year
 
 
 class GenreCategoryAbstract(models.Model):
@@ -20,17 +20,22 @@ class GenreCategoryAbstract(models.Model):
     class Meta:
         abstract = True
 
+    def __str__(self):
+        return self.name
+
 
 class Category(GenreCategoryAbstract):
 
-    def __str__(self):
-        return self.name
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
 
 class Genre(GenreCategoryAbstract):
 
-    def __str__(self):
-        return self.name
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
 
 
 class Title(models.Model):
@@ -80,6 +85,7 @@ class ReviewCommentAbstract(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ('-pub_date',)
 
 
 class Review(ReviewCommentAbstract):
@@ -105,9 +111,6 @@ class Review(ReviewCommentAbstract):
             ),
         ]
 
-    def __str__(self):
-        return self.text
-
 
 class Comment(ReviewCommentAbstract):
     review = models.ForeignKey(
@@ -121,6 +124,3 @@ class Comment(ReviewCommentAbstract):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ('-pub_date',)
-
-    def __str__(self):
-        return self.text

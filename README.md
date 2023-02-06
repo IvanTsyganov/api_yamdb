@@ -111,17 +111,61 @@ go to - http://127.0.0.1:8000/redoc.html
 ```
 https://www.sqlite.org/download.html
 ```
+### WARNING
+Model Title contains foreign keys from Genre and Categories models, you must first import csv files into Genre and Categories, and then into Title, in order to avoid errors
+
 1. Open Sqlite
 2. Find database(db.sqlite3):
 ```
 (root)/api_yamdb/
 ```
-3. Choose data type and table. Use '.mode' command to import(example):
+3. Choose csv data and genre table. Use '.mode' command to import:
+```
+.mode csv reviews_genre
+```
+4. Import .csv-file to genre table
+```
+.import genre.csv reviews_genre
+```
+5. Choose csv data and category table. Use '.mode' command to import:
+```
+.mode csv reviews_category
+```
+6. Import .csv-file to category table
+```
+.import category.csv reviews_category
+```
+7. Choose csv data and title table. Use '.mode' command to import:
 ```
 .mode csv reviews_title
 ```
-4. Import .csv-file to right table
+8. Import .csv-file to title table
 ```
 .import titles.csv reviews_title
 ```
-5. Repeat for all .csv-files
+9. Choose csv data and user table. Use '.mode' command to import:
+```
+.mode csv reviews_user
+```
+10. Import .csv-file to  user table
+```
+.import users.csv reviews_user
+```
+11. Choose csv data and comment table . Use '.mode' command to import:
+```
+.mode csv reviews_comment
+```
+12. Import .csv-file to comment table
+```
+.import comments.csv reviews_comment
+```
+13. Choose csv data and review table. Use '.mode' command to import:
+```
+.mode csv reviews_review
+```
+14. Import .csv-file to review table
+```
+.import review.csv reviews_review
+```
+
+
