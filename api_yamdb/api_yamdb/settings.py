@@ -135,3 +135,4 @@ EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 DOMAIN_NAME = 'yamdb.xxx'
 ADMIN_EMAIL = f'admin@{DOMAIN_NAME}'
 FORBIDDEN_NAMES = ['me']
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'

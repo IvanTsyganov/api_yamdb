@@ -70,18 +70,17 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if self.context['request'].method != 'POST':
             return data
-        else:
-            author = self.context['request'].user
-            title_id = (
-                self.context['request'].parser_context['kwargs']['title_id']
-            )
-            if Review.objects.filter(
-                    author=author,
-                    title__id=title_id
-            ).exists():
-                raise serializers.ValidationError(
-                    'Не более одного отзыва на произведение!')
-            return data
+        author = self.context['request'].user
+        title_id = (
+            self.context['request'].parser_context['kwargs']['title_id']
+        )
+        if Review.objects.filter(
+                author=author,
+                title__id=title_id
+        ).exists():
+            raise serializers.ValidationError(
+                'Не более одного отзыва на произведение!')
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
